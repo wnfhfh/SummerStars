@@ -27,12 +27,18 @@ app.post('/api/checkout', async (req, res) => {
     return res.status(400).json({ error: 'Invalid checkout data.' });
   }
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const gst   = subtotal * 0.05;
+  const qst   = subtotal * 0.09975;
+  const total = subtotal + gst + qst;
   const order = {
     id: `ORD-${Date.now()}`,
     email,
     cart,
-    total: parseFloat(total.toFixed(2)),
+    subtotal: parseFloat(subtotal.toFixed(2)),
+    gst:      parseFloat(gst.toFixed(2)),
+    qst:      parseFloat(qst.toFixed(2)),
+    total:    parseFloat(total.toFixed(2)),
     date: new Date().toISOString()
   };
 
@@ -58,42 +64,47 @@ app.post('/api/checkout', async (req, res) => {
     <head><meta charset="UTF-8"></head>
     <body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif">
       <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
-        <div style="background:#1a1a2e;padding:32px;text-align:center">
-          <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:2px">SUMMERSTARS</h1>
-          <p style="color:#aaa;margin:8px 0 0">Order Confirmation</p>
+        <div style="background:#1E4476;padding:32px;text-align:center">
+          <h1 style="color:#EDD9A3;margin:0;font-size:28px;letter-spacing:2px">Summer Stars</h1>
+          <p style="color:rgba(255,255,255,0.7);margin:8px 0 0">Confirmation de commande</p>
         </div>
         <div style="padding:32px">
-          <h2 style="margin-top:0;color:#1a1a2e">Thank you for your order!</h2>
-          <p style="color:#555">Hi there! Your order has been received and is being processed.</p>
+          <h2 style="margin-top:0;color:#1E4476">Merci pour votre commande !</h2>
+          <p style="color:#555">Votre commande a bien été reçue et est en cours de traitement.</p>
           <div style="background:#f9f9f9;border-radius:6px;padding:16px;margin:20px 0">
-            <p style="margin:0;color:#888;font-size:13px">ORDER ID</p>
-            <p style="margin:4px 0 0;font-weight:bold;color:#1a1a2e;font-size:16px">${order.id}</p>
+            <p style="margin:0;color:#888;font-size:13px">NUMÉRO DE COMMANDE</p>
+            <p style="margin:4px 0 0;font-weight:bold;color:#1E4476;font-size:16px">${order.id}</p>
             <p style="margin:12px 0 0;color:#888;font-size:13px">DATE</p>
-            <p style="margin:4px 0 0;color:#555;font-size:14px">${new Date(order.date).toLocaleString()}</p>
+            <p style="margin:4px 0 0;color:#555;font-size:14px">${new Date(order.date).toLocaleString('fr-CA')}</p>
           </div>
-          <h3 style="color:#1a1a2e;border-bottom:2px solid #f0f0f0;padding-bottom:10px">Order Summary</h3>
+          <h3 style="color:#1E4476;border-bottom:2px solid #f0f0f0;padding-bottom:10px">Récapitulatif</h3>
           <table style="width:100%;border-collapse:collapse">
             <thead>
               <tr style="background:#f0f0f0">
-                <th style="padding:10px 14px;text-align:left;font-size:13px;color:#555">Item</th>
-                <th style="padding:10px 14px;text-align:left;font-size:13px;color:#555">Color</th>
-                <th style="padding:10px 14px;text-align:left;font-size:13px;color:#555">Size</th>
-                <th style="padding:10px 14px;text-align:center;font-size:13px;color:#555">Qty</th>
-                <th style="padding:10px 14px;text-align:right;font-size:13px;color:#555">Subtotal</th>
+                <th style="padding:10px 14px;text-align:left;font-size:13px;color:#555">Article</th>
+                <th style="padding:10px 14px;text-align:left;font-size:13px;color:#555">Couleur</th>
+                <th style="padding:10px 14px;text-align:left;font-size:13px;color:#555">Taille</th>
+                <th style="padding:10px 14px;text-align:center;font-size:13px;color:#555">Qté</th>
+                <th style="padding:10px 14px;text-align:right;font-size:13px;color:#555">Sous-total</th>
               </tr>
             </thead>
             <tbody>${rowsHtml}</tbody>
           </table>
-          <div style="text-align:right;margin-top:16px;padding-top:16px;border-top:2px solid #1a1a2e">
-            <span style="font-size:18px;font-weight:bold;color:#1a1a2e">Total: $${total.toFixed(2)}</span>
+          <div style="text-align:right;margin-top:16px;padding-top:12px;border-top:1px solid #ddd;font-size:13px;color:#555;line-height:1.8">
+            <div>Sous-total : <strong>$${subtotal.toFixed(2)}</strong></div>
+            <div>TPS (5 %) : <strong>$${gst.toFixed(2)}</strong></div>
+            <div>TVQ (9,975 %) : <strong>$${qst.toFixed(2)}</strong></div>
+            <div style="border-top:2px solid #1E4476;margin-top:8px;padding-top:8px;font-size:17px;font-weight:bold;color:#1E4476">
+              Total : $${total.toFixed(2)}
+            </div>
           </div>
           <p style="margin-top:32px;color:#555;font-size:14px">
-            We'll notify you once your order ships. If you have any questions, reply to this email.
+            Nous vous informerons dès que votre commande sera expédiée. Pour toute question, répondez à ce courriel.
           </p>
-          <p style="color:#555;font-size:14px">— The SummerStars Team</p>
+          <p style="color:#555;font-size:14px">— L'équipe Summer Stars</p>
         </div>
         <div style="background:#f9f9f9;padding:16px;text-align:center;color:#aaa;font-size:12px">
-          &copy; ${new Date().getFullYear()} SummerStars. All rights reserved.
+          &copy; ${new Date().getFullYear()} Summer Stars. Tous droits réservés.
         </div>
       </div>
     </body>
@@ -115,13 +126,13 @@ app.post('/api/checkout', async (req, res) => {
     await transporter.sendMail({
       from: `"SummerStars" <${config.email.user}>`,
       to: email,
-      subject: `Order Confirmation – ${order.id}`,
+      subject: `Confirmation de commande – ${order.id}`,
       html: emailHtml
     });
     res.json({ success: true, orderId: order.id });
   } catch (err) {
     console.error('Email send error:', err.message);
-    res.status(500).json({ error: 'Order saved but email failed to send.', orderId: order.id });
+    res.status(500).json({ error: 'Commande enregistrée mais l\'envoi du courriel a échoué.', orderId: order.id });
   }
 });
 

@@ -5,7 +5,8 @@
     "price": 15.99,
     "image": "/images/tshirt.png",
     "colors": ["White", "Black", "Gray", "Navy"],
-    "sizes": ["S", "M", "L", "XL"]
+    "sizes": ["S", "M", "L", "XL"],
+    "description": "Logos impression DTF au coeur et dans le dos"
   },
   {
     "id": 2,
@@ -14,7 +15,7 @@
     "image": "/images/hoodie.png",
     "colors": ["White", "Black", "Gray", "Navy"],
     "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
-    "description": ""
+    "description": "Logos impression DTF au coeur et dans le dos"
   },
   {
     "id": 3,
@@ -23,7 +24,7 @@
     "image": "/images/hoodie.png",
     "colors": ["White", "Black", "Gray", "Navy"],
     "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
-    "description": ""
+    "description": "Logos impression DTF au coeur et dans le dos"
   },
   {
     "id": 4,
@@ -31,6 +32,7 @@
     "price": 19.99,
     "image": "/images/Casquette.png",
     "colors": ["Black"],
-    "sizes": ["Unique"]
+    "sizes": ["Unique"],
+    "description": "Logos patch broderie"
   }
 ]
