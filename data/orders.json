@@ -1,0 +1,18 @@
+[
+  {
+    "id": "ORD-1782602495241",
+    "email": "houdeantoine7@gmail.com",
+    "cart": [
+      {
+        "productId": 1,
+        "name": "T-Shirt Gildan Ultra Cotton",
+        "price": 15.99,
+        "color": "Black",
+        "size": "L",
+        "quantity": 2
+      }
+    ],
+    "total": 31.98,
+    "date": "2026-06-27T23:21:35.241Z"
+  }
+]

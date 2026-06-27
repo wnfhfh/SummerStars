@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "name": "T-Shirt Gildan Ultra Cotton",
+    "price": 15.99,
+    "image": "/images/tshirt.png",
+    "colors": ["White", "Black", "Gray", "Navy"],
+    "sizes": ["S", "M", "L", "XL"]
+  },
+  {
+    "id": 2,
+    "name": "Hoodie Just Like Hero",
+    "price": 36.99,
+    "image": "/images/hoodie.png",
+    "colors": ["White", "Black", "Gray", "Navy"],
+    "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
+    "description": ""
+  },
+  {
+    "id": 3,
+    "name": "Hoodie 1/2-zip Just Like Hero",
+    "price": 36.99,
+    "image": "/images/hoodie.png",
+    "colors": ["White", "Black", "Gray", "Navy"],
+    "sizes": ["XS", "S", "M", "L", "XL", "XXL"],
+    "description": ""
+  },
+  {
+    "id": 4,
+    "name": "Casquettes Trucker",
+    "price": 19.99,
+    "image": "/images/Casquette.png",
+    "colors": ["Black"],
+    "sizes": ["Unique"]
+  }
+]

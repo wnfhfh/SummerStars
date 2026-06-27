@@ -1,0 +1,13 @@
+{
+  "name": "summerstars-shop",
+  "version": "1.0.0",
+  "description": "SummerStars Clothing Shop",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.4"
+  }
+}

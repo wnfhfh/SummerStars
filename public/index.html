@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Summer Stars – Clothing Shop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-dark: #1E4476;
+      --brand-navy-deep: #162f56;
+      --brand-cream: #EDD9A3;
+      --brand-cream-dark: #d4be85;
+    }
+
+    body {
+      background: #f5f4f0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background: var(--brand-dark);
+      padding: 10px 0;
+    }
+    .navbar-logo {
+      height: 52px;
+      width: auto;
+      /* logo has black bg — invert makes it transparent-friendly on navy */
+      filter: brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(180deg);
+    }
+    .navbar-brand-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.7rem;
+      color: var(--brand-cream) !important;
+      text-decoration: none;
+      line-height: 1;
+    }
+    #cartBtn {
+      border-color: var(--brand-cream);
+      color: var(--brand-cream);
+      transition: background .2s, color .2s;
+    }
+    #cartBtn:hover { background: var(--brand-cream); color: var(--brand-dark); }
+    #cartCount {
+      background: var(--brand-cream);
+      color: var(--brand-dark);
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--brand-navy-deep) 0%, var(--brand-dark) 100%);
+      color: #fff;
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .hero h2 { font-size: 2.8rem; font-weight: 700; letter-spacing: 1px; }
+    .hero p { color: rgba(255,255,255,0.65); font-size: 1.1rem; }
+    .hero-badge {
+      background: var(--brand-cream);
+      color: var(--brand-dark);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    /* ── Product Cards ── */
+    .product-card {
+      border: none;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12) !important;
+    }
+    .product-img-wrapper {
+      overflow: hidden;
+      height: 260px;
+      background: #eee;
+    }
+    .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .4s;
+    }
+    .product-card:hover .product-img { transform: scale(1.05); }
+
+    .price-tag {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--brand-dark);
+    }
+
+    /* ── Color Swatches ── */
+    .color-swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-block;
+      transition: transform .15s, outline .15s;
+      outline: 2px solid transparent;
+      outline-offset: 3px;
+      flex-shrink: 0;
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+    .color-swatch.selected {
+      outline: 2px solid var(--brand-dark);
+      transform: scale(1.1);
+    }
+
+    /* ── Size Buttons ── */
+    .size-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-color: #ccc;
+      color: #555;
+      transition: all .15s;
+    }
+    .size-btn:hover { border-color: var(--brand-dark); color: var(--brand-dark); }
+    .size-btn.selected {
+      background: var(--brand-dark);
+      border-color: var(--brand-dark);
+      color: #fff;
+    }
+
+    /* ── Qty controls ── */
+    .qty-group .btn {
+      border-color: #ccc;
+      color: #555;
+      padding: 2px 10px;
+    }
+    .qty-group input {
+      border-color: #ccc;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* ── Add to Cart btn ── */
+    .btn-add-cart {
+      background: var(--brand-dark);
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: background .2s;
+    }
+    .btn-add-cart:hover { background: var(--brand-navy-deep); color: #fff; }
+
+    /* ── Offcanvas Cart ── */
+    .offcanvas-header { background: var(--brand-dark); color: #fff; }
+    .offcanvas-header .btn-close { filter: invert(1); }
+
+    .cart-item {
+      border-bottom: 1px solid #f0f0f0;
+      padding: 14px 0;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-name { font-weight: 600; font-size: 14px; color: var(--brand-dark); }
+    .cart-item-meta { font-size: 12px; color: #888; }
+    .cart-item-price { font-weight: 700; color: var(--brand-dark); }
+
+    .mini-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.15);
+      vertical-align: middle;
+      margin-right: 3px;
+    }
+
+    .cart-total-row {
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 1.1rem;
+    }
+
+    .btn-checkout {
+      background: var(--brand-cream);
+      border: none;
+      color: var(--brand-dark);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      padding: 12px;
+      transition: background .2s, color .2s;
+    }
+    .btn-checkout:hover { background: var(--brand-cream-dark); color: var(--brand-dark); }
+
+    /* ── Checkout Modal ── */
+    .modal-header { background: var(--brand-dark); color: #fff; }
+    .modal-header .btn-close { filter: invert(1); }
+
+    /* ── Toast ── */
+    .toast-container { z-index: 9999; }
+
+    /* ── Empty states ── */
+    .empty-cart {
+      text-align: center;
+      padding: 48px 24px;
+      color: #bbb;
+    }
+    .empty-cart i { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+    /* ── Loading skeleton ── */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #e8e8e8 25%, #f5f5f5 50%, #e8e8e8 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════ NAVBAR ════════════ -->
+<nav class="navbar sticky-top shadow-sm">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+      <img src="/logo.png" alt="Summer Stars" class="navbar-logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="navbar-brand-text" style="display:none">Summer Stars</span>
+    </a>
+    <button class="btn btn-outline-light btn-sm d-flex align-items-center gap-2" id="cartBtn"
+            data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+      <i class="bi bi-bag fs-5"></i>
+      <span>Cart</span>
+      <span id="cartCount" class="d-none">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="hero">
+  <div class="container">
+    <h2>Summer Stars 2026</h2>
+    <p>Collection été</p>
+  </div>
+</section>
+
+<!-- ════════════ PRODUCTS ════════════ -->
+<main class="container py-5">
+  <div class="row g-4" id="productsGrid">
+    <!-- Skeleton placeholders while loading -->
+    <div class="col-sm-6 col-lg-4 skeleton-card">
+      <div class="card border-0 shadow-sm" style="border-radius:14px;overflow:hidden">
+        <div class="skeleton" style="height:260px"></div>
+        <div class="card-body">
+          <div class="skeleton mb-2" style="height:20px;width:70%"></div>
+          <div class="skeleton mb-3" style="height:14px;width:50%"></div>
+          <div class="skeleton" style="height:38px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4 skeleton-card">
+      <div class="card border-0 shadow-sm" style="border-radius:14px;overflow:hidden">
+        <div class="skeleton" style="height:260px"></div>
+        <div class="card-body">
+          <div class="skeleton mb-2" style="height:20px;width:70%"></div>
+          <div class="skeleton mb-3" style="height:14px;width:50%"></div>
+          <div class="skeleton" style="height:38px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4 skeleton-card">
+      <div class="card border-0 shadow-sm" style="border-radius:14px;overflow:hidden">
+        <div class="skeleton" style="height:260px"></div>
+        <div class="card-body">
+          <div class="skeleton mb-2" style="height:20px;width:70%"></div>
+          <div class="skeleton mb-3" style="height:14px;width:50%"></div>
+          <div class="skeleton" style="height:38px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ════════════ CART OFFCANVAS ════════════ -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" style="width:400px;max-width:100vw">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title fw-bold"><i class="bi bi-bag me-2"></i>Your Cart</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column p-0">
+    <div id="cartItems" class="flex-grow-1 px-3 py-2 overflow-auto"></div>
+    <div class="p-3 border-top" id="cartFooter" style="display:none!important">
+      <div class="cart-total-row d-flex justify-content-between align-items-center mb-3">
+        <span class="fw-semibold">Total</span>
+        <span class="fw-bold fs-5" id="cartTotal">$0.00</span>
+      </div>
+      <button class="btn btn-checkout w-100"
+              data-bs-toggle="modal" data-bs-target="#checkoutModal"
+              data-bs-dismiss="offcanvas">
+        <i class="bi bi-lock me-2"></i>Checkout
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ CHECKOUT MODAL ════════════ -->
+<div class="modal fade" id="checkoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius:14px;overflow:hidden">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="bi bi-bag-check me-2"></i>Checkout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+
+        <!-- Order Summary inside modal -->
+        <h6 class="text-muted mb-3 fw-semibold" style="letter-spacing:.5px;font-size:12px;text-transform:uppercase">Order Summary</h6>
+        <div id="modalOrderSummary" class="mb-4"></div>
+
+        <div class="border-top pt-3 mb-4 d-flex justify-content-between">
+          <span class="fw-semibold">Total</span>
+          <span class="fw-bold fs-5" id="modalTotal">$0.00</span>
+        </div>
+
+        <!-- Email input -->
+        <label class="form-label fw-semibold">Email address</label>
+        <p class="text-muted small mb-2">Your confirmation will be sent here.</p>
+        <div class="input-group mb-1">
+          <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope"></i></span>
+          <input type="email" class="form-control border-start-0" id="checkoutEmail"
+                 placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div id="emailError" class="text-danger small mt-1" style="display:none">Please enter a valid email address.</div>
+
+      </div>
+      <div class="modal-footer border-0 pt-0 px-4 pb-4">
+        <button class="btn btn-checkout w-100" id="placeOrderBtn" onclick="placeOrder()">
+          <i class="bi bi-check-circle me-2"></i>Place Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SUCCESS MODAL ════════════ -->
+<div class="modal fade" id="successModal" tabindex="-1" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow-lg text-center" style="border-radius:14px;overflow:hidden">
+      <div class="modal-body py-5 px-4">
+        <div style="font-size:3.5rem;color:#28a745;margin-bottom:16px">
+          <i class="bi bi-patch-check-fill"></i>
+        </div>
+        <h4 class="fw-bold mb-2">Order Placed!</h4>
+        <p class="text-muted mb-1">Confirmation sent to</p>
+        <p class="fw-semibold" id="successEmail"></p>
+        <p class="text-muted small" id="successOrderId"></p>
+        <button class="btn btn-dark mt-3 w-100" data-bs-dismiss="modal" onclick="clearCart()">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ TOAST ════════════ -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="addToast" class="toast align-items-center text-bg-dark border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMsg">Added to cart!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ─────────────────────────────────────────────────
+//  Color map: name → CSS color
+// ─────────────────────────────────────────────────
+const COLOR_MAP = {
+  'White': '#FFFFFF', 'Black': '#1a1a1a', 'Gray': '#808080',
+  'Navy': '#1B2A4A', 'Red': '#dc3545', 'Indigo': '#3B4BC8',
+  'Light Blue': '#9ec5fe', 'Charcoal': '#36454F', 'Burgundy': '#800020',
+  'Forest Green': '#228B22', 'Olive': '#708238', 'Sand': '#C2B280',
+  'Camel': '#C19A6B', 'Khaki': '#C3B091', 'Blush': '#F4A7A3',
+  'Sky Blue': '#87CEEB', 'Sage': '#8A9A5B', 'Coral': '#FF6B6B'
+};
+
+// ─────────────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────────────
+let products = [];
+let cart = [];     // [{ productId, name, price, color, size, quantity }]
+
+// Per-card selection state
+const cardState = {};  // productId → { color, size }
+
+// ─────────────────────────────────────────────────
+//  Load products
+// ─────────────────────────────────────────────────
+async function loadProducts() {
+  const res = await fetch('/api/products');
+  products = await res.json();
+
+  products.forEach(p => { cardState[p.id] = { color: null, size: null }; });
+
+  document.querySelectorAll('.skeleton-card').forEach(el => el.remove());
+  renderProducts();
+}
+
+// ─────────────────────────────────────────────────
+//  Render product grid
+// ─────────────────────────────────────────────────
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = products.map(productCardHtml).join('');
+}
+
+function productCardHtml(p) {
+  const swatches = p.colors.map(c => {
+    const css = COLOR_MAP[c] || '#ccc';
+    const border = c === 'White' ? 'border:1px solid #ddd;' : '';
+    return `<span class="color-swatch" style="background:${css};${border}"
+                  data-color="${c}" title="${c}"
+                  onclick="selectColor(this,${p.id})"></span>`;
+  }).join('');
+
+  const sizes = p.sizes.map(s =>
+    `<button class="btn size-btn" data-size="${s}"
+             onclick="selectSize(this,${p.id})">${s}</button>`
+  ).join('');
+
+  return `
+    <div class="col-sm-6 col-lg-4">
+      <div class="card h-100 product-card shadow-sm">
+        <div class="product-img-wrapper">
+          <img src="${p.image}" class="product-img" alt="${p.name}" loading="lazy"
+               onerror="this.src='https://placehold.co/400x500/e8e8e8/999?text=Photo'">
+        </div>
+        <div class="card-body d-flex flex-column gap-2 p-3">
+          <div>
+            <h5 class="mb-0 fw-bold" style="font-size:1rem;color:var(--brand-dark)">${p.name}</h5>
+            <p class="text-muted mb-0" style="font-size:12px">${p.description}</p>
+          </div>
+          <div class="price-tag">$${p.price.toFixed(2)}</div>
+
+          <!-- Colors -->
+          <div>
+            <div class="d-flex align-items-center gap-1 mb-1">
+              <span class="fw-semibold" style="font-size:12px">Color:</span>
+              <span class="text-muted" style="font-size:12px" id="colorLabel-${p.id}">— select —</span>
+            </div>
+            <div class="d-flex flex-wrap gap-2" id="swatches-${p.id}">${swatches}</div>
+          </div>
+
+          <!-- Sizes -->
+          <div>
+            <div class="fw-semibold mb-1" style="font-size:12px">Size</div>
+            <div class="d-flex flex-wrap gap-1" id="sizes-${p.id}">${sizes}</div>
+          </div>
+
+          <!-- Quantity -->
+          <div>
+            <div class="fw-semibold mb-1" style="font-size:12px">Quantity</div>
+            <div class="input-group input-group-sm qty-group" style="width:116px">
+              <button class="btn" onclick="changeQty(${p.id},-1)">−</button>
+              <input type="number" id="qty-${p.id}" class="form-control" value="1" min="1" max="99">
+              <button class="btn" onclick="changeQty(${p.id},1)">+</button>
+            </div>
+          </div>
+
+          <button class="btn btn-add-cart mt-auto" onclick="addToCart(${p.id})">
+            <i class="bi bi-bag-plus me-1"></i> Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────────
+//  Card interactions
+// ─────────────────────────────────────────────────
+function selectColor(el, productId) {
+  document.querySelectorAll(`#swatches-${productId} .color-swatch`)
+    .forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  cardState[productId].color = el.dataset.color;
+  document.getElementById(`colorLabel-${productId}`).textContent = el.dataset.color;
+}
+
+function selectSize(el, productId) {
+  document.querySelectorAll(`#sizes-${productId} .size-btn`)
+    .forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  cardState[productId].size = el.dataset.size;
+}
+
+function changeQty(productId, delta) {
+  const input = document.getElementById(`qty-${productId}`);
+  const val = Math.max(1, Math.min(99, parseInt(input.value || 1) + delta));
+  input.value = val;
+}
+
+// ─────────────────────────────────────────────────
+//  Cart logic
+// ─────────────────────────────────────────────────
+function addToCart(productId) {
+  const state = cardState[productId];
+  if (!state.color) { showToast('Please select a color.', true); return; }
+  if (!state.size)  { showToast('Please select a size.', true); return; }
+
+  const qty = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
+  const product = products.find(p => p.id === productId);
+
+  // Check if same combo already in cart
+  const existing = cart.find(i =>
+    i.productId === productId && i.color === state.color && i.size === state.size
+  );
+
+  if (existing) {
+    existing.quantity += qty;
+  } else {
+    cart.push({
+      productId,
+      name: product.name,
+      price: product.price,
+      color: state.color,
+      size: state.size,
+      quantity: qty
+    });
+  }
+
+  updateCartBadge();
+  renderCart();
+  showToast(`${product.name} added to cart!`);
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCartBadge();
+  renderCart();
+}
+
+function updateCartItemQty(index, delta) {
+  cart[index].quantity = Math.max(1, cart[index].quantity + delta);
+  renderCart();
+  updateCartBadge();
+}
+
+function clearCart() {
+  cart = [];
+  updateCartBadge();
+  renderCart();
+}
+
+function cartTotal() {
+  return cart.reduce((s, i) => s + i.price * i.quantity, 0);
+}
+
+function cartItemCount() {
+  return cart.reduce((s, i) => s + i.quantity, 0);
+}
+
+function updateCartBadge() {
+  const count = cartItemCount();
+  const badge = document.getElementById('cartCount');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove('d-none');
+  } else {
+    badge.classList.add('d-none');
+  }
+}
+
+// ─────────────────────────────────────────────────
+//  Render cart offcanvas
+// ─────────────────────────────────────────────────
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+  const totalEl = document.getElementById('cartTotal');
+
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div class="empty-cart">
+        <i class="bi bi-bag-x"></i>
+        <p class="fw-semibold">Your cart is empty</p>
+        <p class="small">Add some items to get started!</p>
+      </div>`;
+    footer.style.setProperty('display', 'none', 'important');
+    return;
+  }
+
+  footer.style.removeProperty('display');
+  totalEl.textContent = `$${cartTotal().toFixed(2)}`;
+
+  container.innerHTML = cart.map((item, i) => {
+    const css = COLOR_MAP[item.color] || '#ccc';
+    const border = item.color === 'White' ? 'border:1px solid #ddd;' : '';
+    return `
+      <div class="cart-item">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-meta mt-1">
+              <span class="mini-swatch" style="background:${css};${border}"></span>
+              ${item.color} &nbsp;·&nbsp; Size ${item.size}
+            </div>
+          </div>
+          <button class="btn btn-sm text-danger p-0 ms-2" onclick="removeFromCart(${i})" title="Remove">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <div class="input-group input-group-sm qty-group" style="width:100px">
+            <button class="btn" onclick="updateCartItemQty(${i},-1)">−</button>
+            <input type="text" class="form-control" value="${item.quantity}" readonly>
+            <button class="btn" onclick="updateCartItemQty(${i},1)">+</button>
+          </div>
+          <div class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────
+//  Checkout modal
+// ─────────────────────────────────────────────────
+document.getElementById('checkoutModal').addEventListener('show.bs.modal', () => {
+  // Populate order summary
+  const summary = document.getElementById('modalOrderSummary');
+  const modalTotal = document.getElementById('modalTotal');
+
+  summary.innerHTML = cart.map(item => {
+    const css = COLOR_MAP[item.color] || '#ccc';
+    const border = item.color === 'White' ? 'border:1px solid #ddd;' : '';
+    return `
+      <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+        <div>
+          <div style="font-size:14px;font-weight:600">${item.name}</div>
+          <div style="font-size:12px;color:#888">
+            <span class="mini-swatch" style="background:${css};${border}"></span>
+            ${item.color} · Size ${item.size} · Qty ${item.quantity}
+          </div>
+        </div>
+        <div style="font-weight:700;font-size:14px">$${(item.price * item.quantity).toFixed(2)}</div>
+      </div>`;
+  }).join('');
+
+  modalTotal.textContent = `$${cartTotal().toFixed(2)}`;
+  document.getElementById('emailError').style.display = 'none';
+  document.getElementById('checkoutEmail').value = '';
+});
+
+async function placeOrder() {
+  const emailInput = document.getElementById('checkoutEmail');
+  const emailError = document.getElementById('emailError');
+  const btn = document.getElementById('placeOrderBtn');
+  const email = emailInput.value.trim();
+
+  // Validate
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailError.style.display = 'block';
+    emailInput.focus();
+    return;
+  }
+  emailError.style.display = 'none';
+
+  // Disable button & show spinner
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Placing Order…';
+
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, cart })
+    });
+    const data = await res.json();
+
+    // Close checkout modal
+    bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
+
+    if (data.success || data.orderId) {
+      document.getElementById('successEmail').textContent = email;
+      document.getElementById('successOrderId').textContent = data.orderId || '';
+      new bootstrap.Modal(document.getElementById('successModal')).show();
+    } else {
+      showToast('Something went wrong. Please try again.', true);
+    }
+  } catch (err) {
+    showToast('Network error. Please try again.', true);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Place Order';
+  }
+}
+
+// ─────────────────────────────────────────────────
+//  Toast helper
+// ─────────────────────────────────────────────────
+function showToast(msg, isError = false) {
+  const toastEl = document.getElementById('addToast');
+  const toastMsg = document.getElementById('toastMsg');
+  toastEl.classList.toggle('text-bg-danger', isError);
+  toastEl.classList.toggle('text-bg-dark', !isError);
+  toastMsg.textContent = msg;
+  bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 2500 }).show();
+}
+
+// ─────────────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────────────
+loadProducts();
+renderCart();
+</script>
+</body>
+</html>
